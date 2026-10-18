@@ -18,8 +18,8 @@ export default async function handler(req, res) {
 
     const promptText = "Analiza este recibo o factura. Extrae y organiza la información estrictamente en el siguiente formato:\n- Fecha del comprobante:\n- Proveedor / Establecimiento:\n- Texto completo extraído:\n- Montos y Totales detectados:\nMantenlo limpio y ordenado cronológicamente.";
 
-    // Actualizado al modelo estándar compatible con la API v1beta
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
+    // Conectando con el modelo actual de la API
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
