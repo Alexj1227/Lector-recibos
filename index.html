@@ -16,6 +16,19 @@
         button:hover { background-color: #1557b0; }
         #result { margin-top: 20px; background: #f8f9fa; padding: 15px; border-left: 4px solid #1a73e8; white-space: pre-wrap; font-family: monospace; font-size: 13px; max-height: 300px; overflow-y: auto; }
         .loading { color: #e37400; font-weight: bold; }
+        
+        /* Estilo específico para el botón de copiar */
+        #btnCopiar {
+            background-color: #28a745;
+            margin-top: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            display: none; /* Se oculta inicialmente hasta que haya resultados */
+            width: auto;
+        }
+        #btnCopiar:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
@@ -32,12 +45,19 @@
     <button onclick="processReceipt()">Procesar Recibo con IA</button>
 
     <div id="result"></div>
+    
+    <!-- Botón de Copiar Resultados -->
+    <button id="btnCopiar" onclick="copiarTextoResultado()">📋 Copiar Resultados</button>
 </div>
 
 <script>
 async function processReceipt() {
     const fileInput = document.getElementById('receiptFile').files[0];
     const resultDiv = document.getElementById('result');
+    const btnCopiar = document.getElementById('btnCopiar');
+
+    // Ocultar el botón mientras procesa una nueva imagen
+    btnCopiar.style.display = 'none';
 
     if (!fileInput) {
         alert('Por favor, selecciona una imagen de recibo.');
@@ -63,6 +83,8 @@ async function processReceipt() {
         
         if (data.result) {
             resultDiv.innerText = data.result;
+            // Mostrar el botón de copiar una vez que el resultado es exitoso
+            btnCopiar.style.display = 'block';
         } else {
             resultDiv.innerText = 'Error al procesar: ' + (data.error || 'Respuesta desconocida');
         }
@@ -78,6 +100,32 @@ function toBase64(file) {
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result.split(',')[1]);
         reader.onerror = error => reject(error);
+    });
+}
+
+function copiarTextoResultado() {
+    const elementoResultado = document.getElementById("result");
+    const textoARecuperar = elementoResultado.innerText;
+
+    if (!textoARecuperar.trim()) {
+        alert("No hay texto para copiar.");
+        return;
+    }
+
+    navigator.clipboard.writeText(textoARecuperar).then(() => {
+        const boton = document.getElementById("btnCopiar");
+        const textoOriginal = boton.innerText;
+        
+        boton.innerText = "¡Copiado con éxito! ✅";
+        boton.style.backgroundColor = "#137333";
+        
+        setTimeout(() => {
+            boton.innerText = textoOriginal;
+            boton.style.backgroundColor = "#28a745";
+        }, 2000);
+    }).catch(err => {
+        console.error("Error al copiar: ", err);
+        alert("No se pudo copiar automáticamente.");
     });
 }
 </script>
